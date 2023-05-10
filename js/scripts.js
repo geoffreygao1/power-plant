@@ -64,14 +64,61 @@ const greenFood = changeState("soil")(10)
 const yuckyFood = changeState("soil")(-5)
 
 
-const storeState = () => {
-  let currentState = {};
-  return (stateChangeFunction) => {
-    const newState = stateChangeFunction(currentState);
-    currentState = { ...newState };
-    return newState;
+
+// const storeState = (soilVal, lightVal, waterVal) => {
+//   let currentState = { soil: soilVal, light: lightVal, water: waterVal };
+//   return (stateChangeFunction = state => state) => {
+//     const newState = stateChangeFunction(currentState);
+//     currentState = { ...newState };
+//     return newState;
+//   }
+// }
+
+
+const storeState = (soilVal) => {
+  return (lightVal) => {
+    return (waterVal) => {
+      let currentState = { soil: soilVal, light: lightVal, water: waterVal };
+      return (stateChangeFunction = state => state) => {
+        const newState = stateChangeFunction(currentState);
+        currentState = { ...newState };
+        return newState;
+      }
+    }
   }
 }
+
+const mediterranean = storeState(5);
+const italy = mediterranean(2);
+const olive = storeState()()(4);
+
+const setWater = storeState()()(2);
+
+const rose = storeState(3)(1)(2);
+const tree = storeState(20)(3)(16);
+
+// //form gives us information
+// const tulip = storeState();
+// tulip(feed(5));
+
+// rose(hydrate(5));
+// // add 5 water
+// // return rose state
+// rose();
+// // return rose state
+
+
+// function storeState()
+// {
+//   let currentState = {};
+//   return (stateChangeFunction = state => state) => {
+//     const newState = stateChangeFunction(currentState);
+//     currentState = { ...newState };
+//     return newState;
+//   }
+// }
+
+
 
 /* function storeState() {
   let currentState = {};
@@ -82,10 +129,26 @@ const storeState = () => {
   }
   } */
 
-const stateControl = storeState();
+// const stateControl = storeState();
 
 // const fedPlant = stateControl(blueFood);
 // // {soil: 5}
 // const plantFedAgain = stateControl(greenFood);
 // // {soil:15 }
 
+// if stateChangeFunction is null, default sets to
+// stateChangeFunction = 
+// function default(state){
+//   return state
+// }
+
+// x => x+1
+// function(x){
+//   return x+1
+// }
+
+// state => state
+// function(state)
+// {
+//   return state;
+// }
