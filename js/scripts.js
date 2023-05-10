@@ -50,6 +50,15 @@ const changeState = (prop) => {
   }
 };
 
+const changeName = (nameVal) => {
+  return (state) => ({
+    ...state,
+    "name": nameVal
+  });
+}
+
+const nameRose = changeName("rose");
+
 // +2 : state
 // +1 : value => changeState(prop)(value) : function Level1(state) [preloads prop and value]
 // BASE : prop  => changeState(prop): function Base(value) [preloads prop]
@@ -75,27 +84,78 @@ const yuckyFood = changeState("soil")(-5)
 // }
 
 
-const storeState = (soilVal) => {
-  return (lightVal) => {
-    return (waterVal) => {
-      let currentState = { soil: soilVal, light: lightVal, water: waterVal };
-      return (stateChangeFunction = state => state) => {
-        const newState = stateChangeFunction(currentState);
-        currentState = { ...newState };
-        return newState;
-      }
+const canBlossom = () => ({
+  blossom: (plant) => {
+    return `The plant ${plant.name} has bloomed. It has ${plant.soil} soil, ${plant.water} water, and ${plant.light} light`
+  }
+});
+
+const needsWatering = () => ({
+  checkWater: (state) => {
+    if (state.water < 2) {
+      return `The plant ${state.name} needs water`;
+    } else {
+      return `The plant ${state.name} has enough water`
     }
+  }
+});
+
+
+// composition functions below
+const fruitingPlant = (state) => {
+  let plant = { ...state };
+  return { ...plant, ...canBlossom() };
+};
+
+const waterStatusPlant = (state) => {
+  let plant = { ...state };
+  return { ...plant, ...needsWatering() };
+};
+
+const waterStatusFruitingPlant = (state) => {
+  let plant = { ...state };
+  return { ...plant, ...canBlossom(), ...needsWatering() };
+};
+
+
+// const storeState = (nameVal) => {
+//   return (soilVal) => {
+//     return (lightVal) => {
+//       return (waterVal) => {
+//         let currentState = { name: nameVal, soil: soilVal, light: lightVal, water: waterVal };
+//         return (stateChangeFunction = state => state) => {
+//           // currentState = fruitingPlant(currentState);
+//           const newState = stateChangeFunction(currentState);
+//           currentState = { ...newState };
+//           return newState;
+//         }
+//       }
+//     }
+//   }
+// }
+
+const storeState = (state) => {
+  let currentState = state;
+  return (stateChangeFunction = state => state) => {
+    const newState = stateChangeFunction(currentState);
+    currentState = { ...newState };
+    return newState;
   }
 }
 
-const mediterranean = storeState(5);
-const italy = mediterranean(2);
-const olive = storeState()()(4);
+// const rose = storeState();
+// rose(nameRose);
+// rose(waterStatusPlant);
 
-const setWater = storeState()()(2);
+// const rose = storeState("rose")(3)(1)(2);
+// const mediterranean = storeState(5);
+// const italy = mediterranean(2);
+// const olive = storeState()()(4);
 
-const rose = storeState(3)(1)(2);
-const tree = storeState(20)(3)(16);
+// const setWater = storeState()()(2);
+
+// const rose = storeState(3)(1)(2);
+// const tree = storeState(20)(3)(16);
 
 // //form gives us information
 // const tulip = storeState();
@@ -152,3 +212,4 @@ const tree = storeState(20)(3)(16);
 // {
 //   return state;
 // }
+
